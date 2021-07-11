@@ -8,24 +8,26 @@ app.use(express.static('public'))
 
 
 app.get('/data', async (req, res) => {
-    const query = `{ 
-        search(query: "stars:>50000"), type: REPOSITORY, first: 10) {
-            respositoryCount
-            edges {
-                node {
-                    ... on Respository {
-                        name
-                        owner {
-                            login
-                        }
-                        stargazers {
-                            totalCount
+    const query = `
+        {
+            search(query: "stars:>50000", type: REPOSITORY, first: 10) {
+                repositoryCount
+                edges {
+                    node {
+                        ... on Repository {
+                            name
+                            owner {
+                                login
+                            }
+                            stargazers {
+                                totalCount
+                            }
                         }
                     }
                 }
             }
         }
-    }`
+    `
 
     const url = 'http://api.github.com/graphql'
 
@@ -45,6 +47,8 @@ app.get('/data', async (req, res) => {
         console.error(err)
     }
     const data = await response.json()
+
+    console.log(data)
 
     res.json(data)
 })
